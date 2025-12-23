@@ -1,0 +1,1185 @@
+<!doctype html>
+<html lang="fa" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>هوش مصنوعی صبح دانش</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #00ff88;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        .app-wrapper {
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            position: relative;
+            overflow: auto;
+            padding-bottom: 80px;
+        }
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .main-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100%;
+            padding: 40px 20px 100px 20px;
+        }
+        .glow-orb {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, rgba(0, 255, 136, 0.05) 40%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+        .glow-orb-1 {
+            top: -100px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .glow-orb-2 {
+            top: -50px;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        .glow-orb-3 {
+            top: -150px;
+            right: -150px;
+            width: 600px;
+            height: 600px;
+            animation-delay: 1s;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.4) 0%, rgba(0, 255, 136, 0.2) 30%, rgba(0, 255, 136, 0.1) 50%, transparent 70%);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .ai-suggestions-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            overflow: hidden;
+            position: relative;
+            height: 120px;
+        }
+        .ai-suggestions-track {
+            display: flex;
+            gap: 20px;
+            animation: scrollSuggestions 30s linear infinite;
+            width: max-content;
+        }
+        .ai-suggestion-item {
+            background: rgba(0, 255, 136, 0.15);
+            border: 2px solid #00ff88;
+            border-radius: 20px;
+            padding: 15px 25px;
+            white-space: nowrap;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            flex-shrink: 0;
+        }
+        @keyframes scrollSuggestions {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        .page {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .page.active {
+            display: block;
+        }
+        .title {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px #00ff88;
+            line-height: 1.2;
+        }
+        .feature-card {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 25px 35px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 30px rgba(0, 255, 136, 0.5);
+        }
+        .feature-text {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .feature-desc {
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            color: rgba(0, 255, 136, 0.8);
+            margin: 0;
+        }
+        .buttons-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        .glass-button {
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        .download-button {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+        }
+        .download-button:hover {
+            background: rgba(0, 255, 136, 0.4);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+            transform: translateY(-3px);
+        }
+        .chat-button {
+            background: rgba(0, 136, 255, 0.2);
+            border: 2px solid #0088ff;
+            color: #0088ff;
+        }
+        .chat-button:hover {
+            background: rgba(0, 136, 255, 0.4);
+            box-shadow: 0 0 30px rgba(0, 136, 255, 0.6);
+            transform: translateY(-3px);
+        }
+        /* نوار ابزار پایینی */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 2px solid #00ff88;
+            box-shadow: 0 -5px 30px rgba(0, 255, 136, 0.3);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 10px 0;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            color: #00ff88;
+            min-width: 70px;
+        }
+        .nav-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateY(-3px);
+        }
+        .nav-item.active {
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+        }
+        .nav-icon {
+            font-size: 24px;
+        }
+        .nav-label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        /* صفحه قابلیت‌ها */
+        .capabilities-list {
+            width: 100%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .capability-item {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        .capability-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .capability-desc {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(0, 255, 136, 0.8);
+        }
+        /* صفحه ربات */
+        .warning-box {
+            background: rgba(255, 0, 0, 0.15);
+            border: 2px solid #ff0000;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 0 auto 30px auto;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            max-width: 800px;
+        }
+        .warning-title {
+            color: #ff0000;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        .warning-text {
+            color: #ff6666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .contact-info {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .price-box {
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid #FFD700;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto 0 auto;
+            text-align: center;
+            max-width: 800px;
+        }
+        .price {
+            font-size: 32px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 15px #FFD700;
+        }
+        /* صفحه تنظیمات */
+        .settings-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        .setting-item {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 0 auto 15px auto;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        .setting-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .theme-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .theme-btn {
+            padding: 12px 25px;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .theme-btn:hover {
+            background: rgba(0, 255, 136, 0.3);
+            transform: scale(1.05);
+        }
+        .theme-btn.active-theme {
+            background: rgba(0, 255, 136, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+        }
+        /* صفحه فیدبک */
+        .feedback-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        .feedback-form {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            margin: 0 auto;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #00ff88;
+            font-size: 16px;
+            font-family: inherit;
+            text-align: center;
+        }
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .rating-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .star-btn {
+            font-size: 32px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: #666;
+        }
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+        .star-btn.filled {
+            color: #FFD700;
+            text-shadow: 0 0 10px #FFD700;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            color: #00ff88;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .submit-btn:hover:not(:disabled) {
+            background: rgba(0, 255, 136, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+        }
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .feedback-list {
+            margin-top: 30px;
+        }
+        .feedback-item {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .feedback-stars {
+            color: #FFD700;
+            margin-bottom: 5px;
+        }
+        .feedback-message {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .feedback-date {
+            font-size: 12px;
+            color: rgba(0, 255, 136, 0.6);
+            margin-top: 5px;
+        }
+        .success-message {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* صفحه پشتیبانی */
+        .support-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        .support-card {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 0 auto 20px auto;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        .support-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .support-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .support-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: rgba(0, 255, 136, 0.9);
+        }
+        .support-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            color: #00ff88;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .support-link:hover {
+            background: rgba(0, 255, 136, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+        }
+        /* تم سفید */
+        body.light-theme {
+            background: #ffffff;
+            color: #333333;
+        }
+        body.light-theme .star {
+            background: #00cc70;
+            box-shadow: 0 0 10px #00cc70;
+        }
+        body.light-theme .glow-orb {
+            background: radial-gradient(circle, rgba(0, 204, 112, 0.1) 0%, rgba(0, 204, 112, 0.03) 40%, transparent 70%);
+        }
+        body.light-theme .title {
+            color: #00cc70;
+            text-shadow: 0 0 15px rgba(0, 204, 112, 0.3);
+        }
+        body.light-theme .feature-card,
+        body.light-theme .capability-item,
+        body.light-theme .setting-item,
+        body.light-theme .feedback-form,
+        body.light-theme .support-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #00cc70;
+            color: #333333;
+            text-align: center;
+        }
+        body.light-theme .feature-desc,
+        body.light-theme .capability-desc {
+            color: #666666;
+        }
+        body.light-theme .bottom-nav {
+            background: rgba(255, 255, 255, 0.98);
+            border-top-color: #00cc70;
+        }
+        body.light-theme .nav-item {
+            color: #00cc70;
+        }
+        body.light-theme .form-input {
+            background: rgba(0, 0, 0, 0.05);
+            color: #333333;
+            border-color: #00cc70;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 32px;
+            }
+            .glass-button {
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+            .feature-text {
+                font-size: 16px;
+            }
+            .nav-label {
+                font-size: 10px;
+            }
+            .nav-icon {
+                font-size: 20px;
+            }
+            .nav-item {
+                min-width: 60px;
+                padding: 8px 10px;
+            }
+            .capabilities-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="app-wrapper">
+   <div class="glow-orb glow-orb-1"></div>
+   <div class="glow-orb glow-orb-2"></div>
+   <div class="glow-orb glow-orb-3"></div>
+   <div class="stars-container" id="starsContainer"></div>
+   <div class="main-content"><!-- صفحه خانه -->
+    <div class="page active" id="homePage">
+     <h1 class="title" id="mainTitle">هوش مصنوعی صبح دانش</h1>
+     <p style="text-align: center; font-size: 16px; color: rgba(0, 255, 136, 0.8); margin: -30px 0 40px 0;">کاری از آرشام نظرزاده</p>
+     
+     <!-- بخش "با هوش مصنوعی رفیق شو" در ابتدای صفحه -->
+     <div style="width: 100%; max-width: 800px; margin: 0 auto 40px auto;">
+      <div class="feature-card" style="max-width: 100%; padding: 30px;">
+       <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+        <h2 style="font-size: 28px; margin: 0; color: #00ff88;">با هوش مصنوعی رفیق شو</h2>
+        <div style="font-size: 36px;">
+         ❓
+        </div>
+       </div>
+       <p style="font-size: 16px; line-height: 1.8; color: rgba(0, 255, 136, 0.8); margin: 0;">هوش مصنوعی صبح دانش می‌تواند در زمینه‌های مختلف به شما کمک کند:</p>
+      </div>
+     </div>
+
+     <!-- نوار مشاوره‌ها -->
+     <div class="ai-suggestions-container">
+      <div class="ai-suggestions-track" id="suggestionsTrack">
+       <div class="ai-suggestion-item">💡 مشاوره تحصیلی و آموزشی</div>
+       <div class="ai-suggestion-item">🎯 برنامه‌ریزی اهداف زندگی</div>
+       <div class="ai-suggestion-item">📚 کمک در یادگیری زبان</div>
+       <div class="ai-suggestion-item">💼 مشاوره شغلی و کاریابی</div>
+       <div class="ai-suggestion-item">🏋️ برنامه ورزشی و تغذیه</div>
+       <div class="ai-suggestion-item">🎨 ایده‌های خلاقانه و هنری</div>
+       <div class="ai-suggestion-item">💻 یادگیری برنامه‌نویسی</div>
+       <div class="ai-suggestion-item">📝 نوشتن متن و محتوا</div>
+       <div class="ai-suggestion-item">🧠 تقویت مهارت‌های فکری</div>
+       <div class="ai-suggestion-item">🌍 اطلاعات عمومی و دانش</div>
+       <div class="ai-suggestion-item">🌐 ساخت سایت و اپلیکیشن</div>
+       <div class="ai-suggestion-item">📊 تحلیل داده و کسب‌وکار</div>
+       <div class="ai-suggestion-item">📸 ویرایش عکس و ویدیو</div>
+       <div class="ai-suggestion-item">🎵 تولید موسیقی و صدا</div>
+       <div class="ai-suggestion-item">📈 بازاریابی دیجیتال</div>
+       <div class="ai-suggestion-item">🤖 توسعه هوش مصنوعی</div>
+       <!-- تکرار برای اسکرول بی‌نهایت -->
+       <div class="ai-suggestion-item">💡 مشاوره تحصیلی و آموزشی</div>
+       <div class="ai-suggestion-item">🎯 برنامه‌ریزی اهداف زندگی</div>
+       <div class="ai-suggestion-item">📚 کمک در یادگیری زبان</div>
+       <div class="ai-suggestion-item">💼 مشاوره شغلی و کاریابی</div>
+       <div class="ai-suggestion-item">🏋️ برنامه ورزشی و تغذیه</div>
+       <div class="ai-suggestion-item">🎨 ایده‌های خلاقانه و هنری</div>
+       <div class="ai-suggestion-item">💻 یادگیری برنامه‌نویسی</div>
+       <div class="ai-suggestion-item">📝 نوشتن متن و محتوا</div>
+       <div class="ai-suggestion-item">🧠 تقویت مهارت‌های فکری</div>
+       <div class="ai-suggestion-item">🌍 اطلاعات عمومی و دانش</div>
+       <div class="ai-suggestion-item">🌐 ساخت سایت و اپلیکیشن</div>
+       <div class="ai-suggestion-item">📊 تحلیل داده و کسب‌وکار</div>
+       <div class="ai-suggestion-item">📸 ویرایش عکس و ویدیو</div>
+       <div class="ai-suggestion-item">🎵 تولید موسیقی و صدا</div>
+       <div class="ai-suggestion-item">📈 بازاریابی دیجیتال</div>
+       <div class="ai-suggestion-item">🤖 توسعه هوش مصنوعی</div>
+      </div>
+     </div>
+
+     <!-- بخش اخبار -->
+     <div class="feature-card" style="max-width: 800px; margin-bottom: 40px;">
+      <h2 style="font-size: 32px; font-weight: bold; margin-bottom: 30px; color: #00ff88;">📰 اخبار و بروزرسانی‌ها</h2>
+       <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+        <div style="font-size: 48px;">
+         🎨
+        </div>
+        <div>
+         <h3 style="font-size: 24px; margin: 0 0 5px 0; color: #00ff88;">هوش مصنوعی تصویرساز به زودی!</h3>
+         <p style="font-size: 14px; margin: 0; color: rgba(0, 255, 136, 0.6);">منتشر شده: دی ۱۴۰۳</p>
+        </div>
+       </div>
+       <p class="feature-desc" style="line-height: 1.8; font-size: 16px;">ما در حال توسعه یک قابلیت جدید و هیجان‌انگیز هستیم! به زودی می‌توانید با استفاده از هوش مصنوعی ما، تصاویر حرفه‌ای با کیفیت 4K تولید کنید. این ویژگی شامل امکانات زیر خواهد بود:</p>
+       <ul style="text-align: center; margin: 15px 0; padding-right: 0; line-height: 2;">
+        <li>تولید تصاویر با کیفیت بالا از روی توضیحات متنی فارسی و انگلیسی</li>
+        <li>ویرایش و بهبود تصاویر موجود با هوش مصنوعی</li>
+        <li>انتخاب از میان سبک‌های هنری مختلف (واقع‌گرایانه، کارتونی، نقاشی و...)</li>
+        <li>قابلیت دانلود تصاویر با فرمت‌های مختلف</li>
+       </ul>
+       <p class="feature-desc" style="line-height: 1.8; font-size: 16px; margin-top: 15px;">این ویژگی برای تمام کاربران فعلی به صورت رایگان در دسترس خواهد بود. منتظر اعلام رسمی تاریخ انتشار باشید!</p>
+     </div>
+
+     <!-- سوالات متداول -->
+     <div class="feature-card" style="max-width: 800px;">
+      <h2 style="font-size: 32px; font-weight: bold; margin-bottom: 30px; color: #00ff88;">❓ سوالات متداول</h2>
+       <details style="margin-bottom: 20px; cursor: pointer;" open><summary style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #00ff88; cursor: pointer;"> ✅ آیا استفاده از هوش مصنوعی رایگان است؟ </summary>
+        <p class="feature-desc" style="line-height: 1.8;">بله، استفاده از هوش مصنوعی صبح دانش برای گفتگو و استفاده شخصی کاملاً رایگان است. فقط در صورتی که بخواهید یک ربات اختصاصی برای کسب‌وکار خود داشته باشید، نیاز به خرید اشتراک ماهانه دارید.</p>
+       </details>
+       <details style="margin-bottom: 20px; cursor: pointer;"><summary style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #00ff88; cursor: pointer;"> 🤖 چگونه می‌توانم ربات را برای کسب‌وکارم نصب کنم؟ </summary>
+        <p class="feature-desc" style="line-height: 1.8;">بعد از خرید اشتراک، تیم فنی ما به صورت کامل ربات را روی پلتفرم مورد نظر شما (تلگرام، اینستاگرام، واتساپ، وب‌سایت) نصب و پیکربندی می‌کند. شما فقط کافی است با شماره 09039304464 تماس بگیرید.</p>
+       </details>
+       <details style="margin-bottom: 20px; cursor: pointer;"><summary style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #00ff88; cursor: pointer;"> 🌐 آیا از زبان فارسی پشتیبانی می‌کند؟ </summary>
+        <p class="feature-desc" style="line-height: 1.8;">بله، هوش مصنوعی ما به طور کامل از زبان فارسی پشتیبانی می‌کند و می‌تواند با لهجه‌های مختلف فارسی ارتباط برقرار کند. همچنین قابلیت ترجمه بین فارسی و انگلیسی را نیز دارد.</p>
+       </details>
+       <details style="margin-bottom: 20px; cursor: pointer;"><summary style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #00ff88; cursor: pointer;"> 💰 هزینه اشتراک ماهانه چقدر است؟ </summary>
+        <p class="feature-desc" style="line-height: 1.8;">هزینه اشتراک ماهانه برای ربات اختصاصی کسب‌وکار 200,000 تومان است که شامل پشتیبانی کامل، نصب روی تمام پلتفرم‌ها، به‌روزرسانی‌های رایگان و پشتیبانی 24 ساعته می‌شود.</p>
+       </details>
+       <details style="margin-bottom: 20px; cursor: pointer;"><summary style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #00ff88; cursor: pointer;"> ⏰ ربات چند ساعته پاسخگو است؟ </summary>
+        <p class="feature-desc" style="line-height: 1.8;">ربات ما 24 ساعت شبانه‌روز و 7 روز هفته به صورت خودکار پاسخگوی مشتریان شماست و می‌تواند به طور همزمان با هزاران نفر گفتگو کند.</p>
+       </details>
+     </div>
+
+     <footer style="margin-top: 60px; text-align: center; font-size: 14px; color: #ffffff;">
+      <p style="text-shadow: 0 2px 15px rgba(0, 255, 136, 0.4); margin: 0;">ساخته شده توسط آرشام نظرزاده مجیدی</p>
+     </footer>
+    </div>
+
+    <!-- صفحه گفت‌وگو با هوش مصنوعی -->
+    <div class="page" id="chatPage">
+     <h1 class="title">گفت‌وگو با هوش مصنوعی</h1>
+     <div style="width: 100%; max-width: 600px;">
+      <div class="feature-card" style="padding: 40px;">
+       <div style="font-size: 100px; margin-bottom: 20px;">
+        🤖
+       </div>
+       <h2 style="font-size: 26px; margin-bottom: 15px; color: #00ff88;">شروع گفت‌وگو با هوش مصنوعی</h2>
+       <p style="font-size: 16px; line-height: 1.8; color: rgba(0, 255, 136, 0.8); margin-bottom: 25px;">آماده‌اید تا با هوش مصنوعی صبح دانش گفتگو کنید؟<br>روی دکمه زیر کلیک کنید و گفتگوی خود را شروع کنید.</p>
+       <a href="https://chat.cxgenie.ai?aid=1b6a6a5f-9730-4a0c-b697-8aaf7dc64617&amp;lang=fa" target="_blank" rel="noopener noreferrer" class="glass-button chat-button" style="font-size: 22px; padding: 15px 40px;"> 🚀 شروع گفت‌وگو </a>
+      </div>
+     </div>
+    </div>
+
+    <!-- صفحه حساب کاربری -->
+    <div class="page" id="accountPage">
+     <h1 class="title">حساب کاربری</h1>
+     <div style="width: 100%; max-width: 600px;">
+      <div id="loginForm" class="feedback-form">
+       <h2 style="margin-bottom: 20px; font-size: 24px;">ورود به حساب کاربری</h2>
+       <p style="margin-bottom: 30px; color: rgba(0, 255, 136, 0.7);">لطفاً اطلاعات خود را وارد کنید</p>
+       <form onsubmit="handleLogin(event)">
+        <div class="form-group"><label class="form-label" for="userName">نام و نام خانوادگی</label> <input type="text" class="form-input" id="userName" placeholder="نام خود را وارد کنید" required>
+        </div>
+        <div class="form-group"><label class="form-label" for="userEmail">ایمیل</label> <input type="email" class="form-input" id="userEmail" placeholder="example@email.com" required>
+        </div><button type="submit" class="submit-btn">ورود به حساب</button>
+       </form>
+      </div>
+      <div id="accountDashboard" style="display: none;">
+       <div class="feedback-form" style="text-align: center;">
+        <div style="width: 100px; height: 100px; margin: 0 auto 20px; background: rgba(0, 255, 136, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px;">
+         <svg width="60" height="60" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" />
+         </svg>
+        </div>
+        <h2 style="margin-bottom: 10px;" id="displayName">نام کاربر</h2>
+        <p style="color: rgba(0, 255, 136, 0.7); margin-bottom: 30px;" id="displayEmail">email@example.com</p>
+        <div style="display: grid; gap: 15px; margin-bottom: 30px;"><button onclick="navigateTo('settings')" style="padding: 15px; background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; border-radius: 10px; color: #00ff88; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /> <path d="M12 1v6m0 6v6m8.66-10.34l-4.24 4.24M7.58 12.42l-4.24 4.24M23 12h-6m-6 0H1m17.66 8.66l-4.24-4.24M7.58 11.58l-4.24-4.24" />
+          </svg> تنظیمات </button> <button onclick="navigateTo('support')" style="padding: 15px; background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; border-radius: 10px; color: #00ff88; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /> <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /> <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg> پشتیبانی </button> <button onclick="navigateTo('feedback')" style="padding: 15px; background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; border-radius: 10px; color: #00ff88; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> <line x1="9" y1="10" x2="15" y2="10" /> <line x1="9" y1="14" x2="13" y2="14" />
+          </svg> ارسال فیدبک </button>
+        </div><button onclick="handleLogout()" style="width: 100%; padding: 15px; background: rgba(255, 0, 0, 0.2); border: 2px solid #ff0000; border-radius: 10px; color: #ff6666; font-weight: bold; cursor: pointer;"> خروج از حساب </button>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <!-- صفحه قابلیت‌ها -->
+    <div class="page" id="capabilitiesPage">
+     <h1 class="title">قابلیت‌های چت بات</h1>
+     
+     <!-- بخش "با هوش مصنوعی رفیق شو" در قابلیت‌ها -->
+     <div style="width: 100%; max-width: 800px; margin: 0 auto 40px auto;">
+      <div class="feature-card" style="max-width: 100%; padding: 30px;">
+       <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+        <h2 style="font-size: 28px; margin: 0; color: #00ff88;">با هوش مصنوعی رفیق شو</h2>
+        <div style="font-size: 36px;">
+         ❓
+        </div>
+       </div>
+       <p style="font-size: 16px; line-height: 1.8; color: rgba(0, 255, 136, 0.8); margin: 0;">هوش مصنوعی صبح دانش می‌تواند در زمینه‌های مختلف به شما کمک کند:</p>
+      </div>
+     </div>
+     
+     <!-- لیست قابلیت‌ها (کوچکتر) -->
+     <div class="capabilities-list">
+      <div class="capability-item">
+       <div class="capability-title"><span>💬</span> <span>پاسخگویی هوشمند 24/7</span>
+       </div>
+       <p class="capability-desc">چت بات ما به صورت شبانه‌روزی آماده پاسخگویی است.</p>
+      </div>
+      <div class="capability-item">
+       <div class="capability-title"><span>🌐</span> <span>پشتیبانی زبان فارسی</span>
+       </div>
+       <p class="capability-desc">درک کامل زبان فارسی با لهجه‌های مختلف.</p>
+      </div>
+      <div class="capability-item">
+       <div class="capability-title"><span>🎯</span> <span>تخصصی‌سازی پاسخ‌ها</span>
+       </div>
+       <p class="capability-desc">ارائه پاسخ‌های سفارشی بر اساس سابقه گفتگو.</p>
+      </div>
+      <div class="capability-item">
+       <div class="capability-title"><span>📊</span> <span>تحلیل احساسات</span>
+       </div>
+       <p class="capability-desc">تشخیص احساسات کاربر و پاسخ متناسب.</p>
+      </div>
+      <div class="capability-item">
+       <div class="capability-title"><span>🔗</span> <span>یکپارچه‌سازی پلتفرم‌ها</span>
+       </div>
+       <p class="capability-desc">نصب در تلگرام، اینستاگرام، واتساپ و وب‌سایت.</p>
+      </div>
+     </div>
+    </div>
+
+    <!-- سایر صفحات بدون تغییر (ربات، تنظیمات، فیدبک، پشتیبانی) -->
+    <div class="page" id="botPage">
+     <h1 class="title">ربات صبح دانش</h1>
+     <div class="warning-box">
+      <div class="warning-title">
+       ⚠️ اخطار مهم
+      </div>
+      <p class="warning-text">هوش مصنوعی کاملاً رایگان است و برای ساخت دستیار برای شرکت خود باید اشتراک تهیه کنید</p>
+      <div class="contact-info">
+       <div class="contact-item"><span>📞</span> <span>برای خرید: <strong id="contactPhone">09039304464</strong></span>
+       </div>
+       <div class="contact-item"><span>📧</span> <span>پشتیبانی: <strong id="supportEmail">arsham@example.com</strong></span>
+       </div>
+      </div>
+     </div>
+     <div class="feature-card" style="max-width: 100%; margin-bottom: 20px;">
+      <h2 style="font-size: 24px; margin-bottom: 20px;">🤖 ربات هوشمند برای کسب‌وکار شما</h2>
+      <p class="feature-desc" style="line-height: 1.8;">شما می‌توانید ربات صبح دانش را به عنوان دستیار هوشمند برای شرکت خود استفاده کنید.</p>
+      <p class="feature-desc" style="line-height: 1.8; margin-top: 15px;">با استفاده از این ربات می‌توانید پشتیبانی مشتریان خود را اتوماتیک کنید.</p>
+     </div>
+     <div class="price-box">
+      <div style="font-size: 20px; margin-bottom: 10px; color: #00ff88;">
+       قیمت اشتراک ماهانه
+      </div>
+      <div class="price">
+       ۲۰۰,۰۰۰ تومان
+      </div>
+      <p style="margin-top: 15px; font-size: 14px; color: rgba(255, 215, 0, 0.8);">شامل پشتیبانی کامل و به‌روزرسانی‌های رایگان</p>
+     </div>
+    </div>
+
+    <!-- نوار پایینی بدون تغییر -->
+    <nav class="bottom-nav">
+     <div class="nav-container"><button class="nav-item" onclick="navigateTo('account')">
+      <div class="nav-icon">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" />
+       </svg>
+      </div>
+      <div class="nav-label">
+       حساب کاربری
+      </div></button> <button class="nav-item" onclick="navigateTo('bot')">
+      <div class="nav-icon">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="12" rx="2" /> <path d="M8 21h8" /> <path d="M12 17v4" /> <circle cx="8" cy="8" r="1" fill="currentColor" /> <circle cx="16" cy="8" r="1" fill="currentColor" /> <path d="M9 13h6" />
+       </svg>
+      </div>
+      <div class="nav-label">
+       ربات صبح دانش
+      </div></button> <button class="nav-item active" onclick="navigateTo('home')">
+      <div class="nav-icon">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> <polyline points="9 22 9 12 15 12 15 22" />
+       </svg>
+      </div>
+      <div class="nav-label">
+       خانه
+      </div></button> <button class="nav-item" onclick="navigateTo('capabilities')">
+      <div class="nav-icon">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+       </svg>
+      </div>
+      <div class="nav-label">
+       قابلیت‌ها
+      </div></button> <button class="nav-item" onclick="navigateTo('chat')">
+      <div class="nav-icon">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> <path d="M8 10h8" /> <path d="M8 14h4" />
+       </svg>
+      </div>
+      <div class="nav-label">
+       چت با هوش مصنوعی
+      </div></button>
+    </div>
+   </nav>
+  </div>
+  <script>
+        // کد جاوااسکریپت بدون تغییر
+        const defaultConfig = {
+            background_color: "#000000",
+            primary_color: "#00ff88",
+            secondary_color: "#0088ff",
+            main_title: "هوش مصنوعی صبح دانش",
+            support_email: "arsham@example.com",
+            contact_phone: "09039304464"
+        };
+        let currentRating = 0;
+        let feedbackData = [];
+        let isLoggedIn = false;
+        let userData = null;
+        function createStars() {
+            const container = document.getElementById('starsContainer');
+            const numStars = 100;
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+        function navigateTo(page) {
+            if ((page === 'settings' || page === 'feedback' || page === 'support') && !isLoggedIn) {
+                navigateTo('account');
+                showInlineMessage('لطفاً ابتدا وارد حساب کاربری خود شوید', 'error');
+                return;
+            }
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active'));
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            const pageMap = {
+                'home': 'homePage',
+                'capabilities': 'capabilitiesPage',
+                'bot': 'botPage',
+                'settings': 'settingsPage',
+                'feedback': 'feedbackPage',
+                'support': 'supportPage',
+                'chat': 'chatPage',
+                'account': 'accountPage'
+            };
+            document.getElementById(pageMap[page]).classList.add('active');
+            const currentNavItem = Array.from(navItems).find(item => {
+                const clickHandler = item.getAttribute('onclick');
+                return clickHandler && clickHandler.includes(`'${page}'`);
+            });
+            if (currentNavItem) {
+                currentNavItem.classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function handleLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            userData = { name, email };
+            isLoggedIn = true;
+            document.getElementById('displayName').textContent = name;
+            document.getElementById('displayEmail').textContent = email;
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('accountDashboard').style.display = 'block';
+        }
+        function handleLogout() {
+            isLoggedIn = false;
+            userData = null;
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('accountDashboard').style.display = 'none';
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+        }
+        function changeTheme(theme) {
+            const themeButtons = document.querySelectorAll('.theme-btn');
+            themeButtons.forEach(btn => btn.classList.remove('active-theme'));
+            event.currentTarget.classList.add('active-theme');
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
+        }
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.star-btn');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('filled');
+                } else {
+                    star.classList.remove('filled');
+                }
+            });
+        }
+        async function submitFeedback(event) {
+            event.preventDefault();
+            const message = document.getElementById('feedbackMessage').value;
+            if (currentRating === 0) {
+                showInlineMessage('لطفاً امتیاز خود را انتخاب کنید', 'error');
+                return;
+            }
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'در حال ارسال...';
+            const feedback = {
+                id: Date.now().toString(),
+                message: message,
+                rating: currentRating,
+                timestamp: new Date().toISOString()
+            };
+            if (window.dataSdk) {
+                const result = await window.dataSdk.create(feedback);
+                if (result.isOk) {
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('feedbackForm').reset();
+                    setRating(0);
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 5000);
+                } else {
+                    showInlineMessage('خطا در ارسال نظر. لطفاً دوباره تلاش کنید.', 'error');
+                }
+            }
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'ارسال نظر';
+        }
+        function showInlineMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                padding: 15px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                text-align: center;
+                background: ${type === 'error' ? 'rgba(255, 0, 0, 0.2)' : 'rgba(0, 255, 136, 0.2)'};
+                border: 2px solid ${type === 'error' ? '#ff0000' : '#00ff88'};
+                color: ${type === 'error' ? '#ff6666' : '#00ff88'};
+                animation: slideIn 0.3s ease;
+            `;
+            messageDiv.textContent = message;
+            const form = document.getElementById('feedbackForm');
+            form.parentNode.insertBefore(messageDiv, form);
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+        function renderFeedbackList(data) {
+            const feedbackList = document.getElementById('feedbackList');
+            if (data.length === 0) {
+                feedbackList.innerHTML = '';
+                return;
+            }
+            const sortedData = [...data].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+            feedbackList.innerHTML = '<h3 style="margin-bottom: 20px;">نظرات ثبت شده:</h3>';
+            sortedData.forEach(feedback => {
+                const item = document.createElement('div');
+                item.className = 'feedback-item';
+                const stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+                const date = new Date(feedback.timestamp).toLocaleDateString('fa-IR');
+                item.innerHTML = `
+                    <div class="feedback-stars">${stars}</div>
+                    <div class="feedback-message">${feedback.message}</div>
+                    <div class="feedback-date">${date}</div>
+                `;
+                feedbackList.appendChild(item);
+            });
+        }
+        const dataHandler = {
+            onDataChanged(data) {
+                feedbackData = data;
+                renderFeedbackList(data);
+            }
+        };
+        async function onConfigChange(config) {
+            const backgroundColor = config.background_color || defaultConfig.background_color;
+            const primaryColor = config.primary_color || defaultConfig.primary_color;
+            const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+            const mainTitle = config.main_title || defaultConfig.main_title;
+            const supportEmail = config.support_email || defaultConfig.support_email;
+            const contactPhone = config.contact_phone || defaultConfig.contact_phone;
+            document.body.style.background = backgroundColor;
+            document.body.style.color = primaryColor;
+            const titleElements = document.querySelectorAll('.title');
+            titleElements.forEach(el => {
+                if (el.id === 'mainTitle') {
+                    el.textContent = mainTitle;
+                }
+                el.style.color = primaryColor;
+                el.style.textShadow = `0 0 20px ${primaryColor}`;
+            });
+            const supportEmailElements = document.querySelectorAll('#supportEmail, #supportEmailLink');
+            supportEmailElements.forEach(el => {
+                if (el.tagName === 'A') {
+                    el.href = `mailto:${supportEmail}`;
+                } else {
+                    el.textContent = supportEmail;
+                }
+            });
+            const contactPhoneElements = document.querySelectorAll('#contactPhone, #supportPhoneLink');
+            contactPhoneElements.forEach(el => {
+                if (el.tagName === 'A') {
+                    el.href = `tel:${contactPhone}`;
+                } else {
+                    el.textContent = contactPhone;
+                }
+            });
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => {
+                star.style.background = primaryColor;
+                star.style.boxShadow = `0 0 10px ${primaryColor}`;
+            });
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.style.borderColor = primaryColor;
+                card.style.boxShadow = `0 0 20px ${primaryColor}33`;
+            });
+        }
+        async function initApp() {
+            createStars();
+            if (window.dataSdk) {
+                const initResult = await window.dataSdk.init(dataHandler);
+                if (!initResult.isOk) {
+                    console.error('Failed to initialize data SDK');
+                }
+            }
+            if (window.elementSdk) {
+                window.elementSdk.init({
+                    defaultConfig,
+                    onConfigChange,
+                    mapToCapabilities: (config) => ({
+                        recolorables: [
+                            {
+                                get: () => config.background_color || defaultConfig.background_color,
+                                set: (value) => {
+                                    config.background_color = value;
+                                    window.elementSdk.setConfig({ background_color: value });
+                                }
+                            },
+                            {
+                                get: () => config.primary_color || defaultConfig.primary_color,
+                                set: (value) => {
+                                    config.primary_color = value;
+                                    window.elementSdk.setConfig({ primary_color: value });
+                                }
+                            },
+                            {
+                                get: () => config.secondary_color || defaultConfig.secondary_color,
+                                set: (value) => {
+                                    config.secondary_color = value;
+                                    window.elementSdk.setConfig({ secondary_color: value });
+                                }
+                            }
+                        ],
+                        borderables: [],
+                        fontEditable: undefined,
+                        fontSizeable: undefined
+                    }),
+                    mapToEditPanelValues: (config) => new Map([
+                        ["main_title", config.main_title || defaultConfig.main_title],
+                        ["support_email", config.support_email || defaultConfig.support_email],
+                        ["contact_phone", config.contact_phone || defaultConfig.contact_phone]
+                    ])
+                });
+            }
+        }
+        initApp();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b259896b3801961',t:'MTc2NjQ2OTE4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
